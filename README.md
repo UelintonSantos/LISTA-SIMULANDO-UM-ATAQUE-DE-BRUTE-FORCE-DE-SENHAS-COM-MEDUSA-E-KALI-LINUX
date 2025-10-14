@@ -1,4 +1,4 @@
-aboratório de Segurança - Simulação de Ataque de Brute Force com Medusa e Kali Linux
+Laboratório de Segurança - Simulação de Ataque de Brute Force com Medusa e Kali Linux
 ====================================================================================
 
 🎯 Objetivo

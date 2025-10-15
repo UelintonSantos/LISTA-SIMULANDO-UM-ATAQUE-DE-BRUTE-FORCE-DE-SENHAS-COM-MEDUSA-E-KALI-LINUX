@@ -1,3 +1,8 @@
+METASPLITABLE2:
+
+IP: 192.168.56.101
+
+
 ┌──(kali㉿kali)-[~]
 └─$ ping -c 2 192.168.56.101
 PING 192.168.56.101 (192.168.56.101) 56(84) bytes of data.
@@ -496,6 +501,3 @@ Reconnecting with SMB1 for workgroup listing.
                                                                              
 ┌──(kali㉿kali)-[~]
 └─$ 
-
-
-

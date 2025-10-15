@@ -1,25 +1,3 @@
-Laboratório de Segurança - Simulação de Ataque de Força Bruta com Medusa e Kali Linux
-
-🎯 Objetivo
-Simular um ataque de força bruta em serviços FTP, HTTP e SMB utilizando a ferramenta Medusa no Kali Linux contra uma máquina virtual Metasploitable2.
-
-🖥️ Ambiente de Teste
-Máquina Atacante
-Sistema : Kali Linux
-
-Ferramenta : Medusa v2.3
-
-Máquina Alvo (Vítima)
-Sistema : Metasploitable2
-
-IP : 192.168.56.101
-
-Ambiente : VirtualBox
-
-🔍 Reconhecimento Inicial
-Teste de Conectividade
-festança
-
 ┌──(kali㉿kali)-[~]
 └─$ ping -c 2 192.168.56.101
 PING 192.168.56.101 (192.168.56.101) 56(84) bytes of data.
@@ -519,17 +497,5 @@ Reconnecting with SMB1 for workgroup listing.
 ┌──(kali㉿kali)-[~]
 └─$ 
 
-📊 Resumo dos Resultados
-------------------------
 
-### Credenciais Comprometidas
 
-ServiçoUsuárioSenhaStatusHTTPadminpassword✅ SucessoHTTPmsfadminpassword✅ SucessoHTTPuserpassword✅ SucessoHTTProotpassword✅ SucessoSMBmsfadminmsfadmin✅ Sucesso
-
-### Serviços Vulneráveis Identificados
-
-1.  **FTP (vsftpd 2.3.4)** - Vulnerável a brute force
-    
-2.  **HTTP (Apache 2.2.8)** - DVWA vulnerável a ataques de autenticação
-    
-3.  **SMB (Samba 3.0.20)** - Política de senhas fracas

@@ -20,19 +20,16 @@ Ambiente : VirtualBox
 Teste de Conectividade
 festança
 
-Texto simples
- 
-┌──(kali㉿kali)-[~]└─$ ping -c 2 192.168.56.101
-PING 192.168.56.101 (192.168.56.101) 56(84) bytes de dados.64 bytes de 192.168.56.101: icmp_seq=1 ttl=64 tempo=57,4 ms64 bytes de 192.168.56.101: icmp_seq=2 ttl=64 tempo=1,43 ms
+┌──(kali㉿kali)-[~]
+└─$ ping -c 2 192.168.56.101
+PING 192.168.56.101 (192.168.56.101) 56(84) bytes of data.
+64 bytes from 192.168.56.101: icmp_seq=1 ttl=64 time=57.4 ms
+64 bytes from 192.168.56.101: icmp_seq=2 ttl=64 time=1.43 ms
 
- --- 192.168.56.101 ping statistics ---
+--- 192.168.56.101 ping statistics ---
 2 packets transmitted, 2 received, 0% packet loss, time 1003ms
 rtt min/avg/max/mdev = 1.425/29.396/57.368/27.971 ms
-
-Varredura de Portas e Serviços
-
-Texto
- 
+                                                                             
 ┌──(kali㉿kali)-[~]
 └─$ nmap -sV -p 21,22,80,445,139 192.168.56.101
 Starting Nmap 7.95 ( https://nmap.org ) at 2025-10-12 19:06 EDT
@@ -64,11 +61,7 @@ ftp> quit
 221 Goodbye.
                                                                              
 ┌──(kali㉿kali)-[~]
-└─$
-
-Grupo de trabalho: WORKGROUP
-
-⚔️ Ataque com Medusa - FTP
+└─$ 
 
 MEDUSA:
 
@@ -108,10 +101,9 @@ ftp: Login failed
 ftp> qui
 421 Timeout.
 
+DVWA:
 
-🌐 Teste de Acesso - HTTP (DVWA)
-Identificação do Alvo
-Endereço DVWA : http://192.168.56.101/dvwa/login.php
+Endereço: http://192.168.56.101/dvwa/login.php
 
 MEDUSA:
 
@@ -152,12 +144,10 @@ Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.n
                                                                              
 ┌──(haikai)-[~]
 └─$
-
-
-  💻 Ataque de Força Bruta - PASWORD SPRAYING - SMB:
+ 
+PASWORD SPRAYING - SMB:
 
                                                                             
-┌                                                                           
 ┌──(kali㉿kali)-[~]
 └─$ enum4linux -a 192.168.56.101 | tee enum4_output.txt
 Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sun Oct 12 23:28:07 2025

